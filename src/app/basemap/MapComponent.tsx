@@ -28,17 +28,78 @@ function MapComponent() {
     app.view.destroy();
   }
 
-  const [Map, MapViews, Search, BasemapToggle, Graphic, GraphicsLayer, FeatureLayer] = await loadModules(['esri/Map', 'esri/views/MapView', "esri/widgets/Search", "esri/widgets/BasemapGallery", "esri/Graphic", "esri/layers/GraphicsLayer", "esri/layers/FeatureLayer"])
+  const [Map, MapViews, Search, BasemapToggle, Graphic, GraphicsLayer, FeatureLayer, Legend, Expand] = await loadModules(['esri/Map', 'esri/views/MapView', "esri/widgets/Search", "esri/widgets/BasemapGallery", "esri/Graphic", "esri/layers/GraphicsLayer", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/widgets/Expand"])
     loadCss("https://js.arcgis.com/4.26/@arcgis/core/assets/esri/themes/dark/main.css")
    
   const map = new Map({
     basemap: "satellite",
   }); 
     
+    function createFillSymbol(value: string) {
+      
+       return {
+            "color": value,
+            "type": "simple-fill",
+            "style": "solid",
+            "outline": {
+              color: [50, 50, 50, 0.95],
+              width: 5
+            }
+          }
+        
+      
+      
+    }
+    
+    const regiones = {
+        type: "class-breaks",
+      field: "totalpobl",
+     
+      defaultSymbol: {
+        type: "simple-fill",
+        color: "black",
+        style: "backward-diagonal",
+        outline: {
+          width: 0.5,
+          color: [50, 50, 50, 0.6]
+        }
+      },
+        classBreakInfos: [
+            {
+              minValue: 0,
+              maxValue: 500,
+            symbol: createFillSymbol("#17B6B6"),
+              label: "< 500"
+          },
+          {
+              minValue: 500,
+              maxValue: 1000,
+            symbol: createFillSymbol("#149ECE"),
+              label: "< 1000"
+          },
+          {
+              minValue: 1000,
+              maxValue: 1500,
+            symbol: createFillSymbol("#8c96c6"),
+              label: "< 1500"
+          },
+          {
+              minValue: 1500,
+              maxValue: 10500,
+            symbol: createFillSymbol("#88419d"),
+              label: "> 1500"
+             },
+          
+        ]
+      };
+
     
     const trailheadsLayer = new FeatureLayer({
       url: "https://soluciones.aeroterra.com/server/rest/services/Argentina_Poblaci%C3%B3n_Viviendas_Hogares/MapServer/0",
       outFields: ["totalpobl", "varon", "mujer", "viviendasp", "hogares"],
+      title: "Poblacion",
+      renderer: regiones,
+      opacity: 0.5,
       popupTemplate: {
         title: "Datos de población",
         content: [{
@@ -53,7 +114,22 @@ function MapComponent() {
             fieldName: "mujer",
             label: "Mujeres"
           }]
+        },
+        {
+        
+         type: "media",
+          mediaInfos: [{
+            title: "<b>Hombres y Mujeres</b>",
+            type: "pie-chart",
+            caption: "",
+            value: {
+              fields: [ "varon","mujer" ],
+              normalizeField: true,
+              tooltipField: "Hombres y mujeres"
+              }
+            }]
         }]
+      
       }
    });
     
@@ -63,6 +139,17 @@ function MapComponent() {
     center: [-61.4932, -31.251994],
     zoom: 12,
   });
+
+    const legend = new Legend({
+          view: view
+        });
+
+        view.ui.add(new Expand({
+          view: view,
+          content: legend,
+          expanded: true
+        }), "top-right");
+      
 
      
   const search = new Search({
@@ -147,7 +234,7 @@ function MapComponent() {
  });
     graphicLayer.add(poligonGraphic) */
     view.ui.add(search, "top-right");
-    view.ui.add(basemapToggle,"bottom-right");
+    /* view.ui.add(basemapToggle,"bottom-right"); */
     app.map = map;
     app.view = view;
     
@@ -189,3 +276,42 @@ async function loadMap(container: HTMLDivElement, filter: string) {
 
 
 export default MapComponent
+
+
+/* 
+SI QUIERO AGREGAR UN PUNTO Y UNA ETIQUTEA A LOS DATOS:
+
+https://developers.arcgis.com/javascript/latest/style-a-feature-layer/
+
+const trailheadsRenderer = {
+        "type": "simple",
+        "symbol": {
+          "type": "picture-marker",
+          "url": "http://static.arcgis.com/images/Symbols/NPS/npsPictograph_0231b.png",
+          "width": "18px",
+          "height": "18px"
+        }
+      }
+
+      const trailheadsLabels = {
+        symbol: {
+          type: "text",
+          color: "#FFFFFF",
+          haloColor: "#5E8D74",
+          haloSize: "2px",
+          font: {
+            size: "12px",
+            family: "Noto Sans",
+            style: "italic",
+            weight: "normal"
+          }
+        },
+
+        labelPlacement: "above-center",
+        labelExpressionInfo: {
+          expression: "$feature.TRL_NAME"
+        }
+      };
+
+
+*/
