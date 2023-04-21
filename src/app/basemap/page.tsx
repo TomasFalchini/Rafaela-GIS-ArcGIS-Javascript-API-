@@ -1,12 +1,13 @@
 import React from "react";
 import MapComponent from "./MapComponent";
+import PoblationLayer from "./components/layers/PoblationLayer";
 
 
 
 async function Home() {
  
 
-  return <div className="w-full h-full p-1" ><MapComponent/></div>;
+  return <div className="flex flex-col" ></div>;
 }
 
 export default Home;

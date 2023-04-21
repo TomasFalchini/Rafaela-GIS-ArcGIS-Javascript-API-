@@ -2,7 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
 
-.esri-widget--button {
-  background-color: #b7c6b6;
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: black;
+}
+
+
+::-webkit-scrollbar {
+    display: none;
 }

@@ -1,14 +1,14 @@
 'use client';
-import esriConfig from "@arcgis/core/config";
+
 import ArcGISMap from "@arcgis/core/Map";
 import MapView from "@arcgis/core/views/MapView";
 import Graphic from "@arcgis/core/Graphic"
 import { loadModules, loadCss } from 'esri-loader';
 
 import React, { useEffect, useRef } from "react";
+import LayerButton from "./LayerButton";
 
-esriConfig.apiKey =
-  "AAPKab065398d9884a0cb1c8ba53a3ad519e2iKIn0i_mrN8ExODhuJrMzvrwgtq9ttYDtXRqNQxaFcYl7dIuKU7EvtFdty0cg3V";
+;
 
 interface MapApp {
   view?: MapView;
@@ -265,13 +265,11 @@ async function loadMap(container: HTMLDivElement, filter: string) {
     return () => {
       asyncCleanup && asyncCleanup.then((cleanup) => cleanup());
     };
-  }, []);
+  }, [mapRef]);
 
  
 
-  return <div className="p-2 w-screen h-screen"> <div className="w-full h-full p-12" ref={mapRef}>
-    
-  </div> </div>;
+  
 }
 
 
